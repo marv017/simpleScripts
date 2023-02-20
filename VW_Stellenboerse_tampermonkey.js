@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  adds expand all, filter and copy2clip functionality
-// @author       marv017
+// @author       You
 // @match        https://karriere.volkswagen.de/sap/bc/bsp/sap/zvw_hcmx_ui_ext/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=volkswagen.de
 // @grant        none
@@ -51,27 +51,40 @@ async function main() {
     btnContainer.appendChild(btn)
 
 
+    // filter button einfügen
+    btn = document.createElement("BUTTON")
+    btnText = document.createTextNode("filter titles")
+    btn.onclick = async function(){
+        let searchString = prompt("Suchanfragen (kommasepariert):", "Praktikant, Abschlussarbeit, studentischer Mitarbeiter")
+        let keywords = searchString.split(",")
+        keywords = keywords.map(s => s.trim())
+        console.log(keywords)
+        for (let elem of document.querySelectorAll(".listItem.jobListItem")) {
+            let accepted = false
+            for (let keyword of keywords) {
+                console.log(keyword)
+                if (elem.childNodes[3].childNodes[5].innerText.contains(keyword)) {
+                    accepted = true
+                    break;
+                }
+            }
+            if (!accepted) {
+                elem.remove()
+            }
+
+        }
+        addToLog("deleted all entries not containing: " + keywords.join(", "))
+    }
+    btn.appendChild(btnText)
+    btnContainer.appendChild(btn)
+
+
     // copy titles to clipboard button einfügen
     btn = document.createElement("BUTTON")
     btnText = document.createTextNode("clip titles")
     btn.onclick = async function(){
         navigator.clipboard.writeText(Array.from(document.querySelectorAll(".jobListItem > .details > .title"), (item => {return item.innerText})).join("\n"))
         addToLog("copied all titles to clipboard")
-    }
-    btn.appendChild(btnText)
-    btnContainer.appendChild(btn)
-
-
-    // filter button einfügen
-    btn = document.createElement("BUTTON")
-    btnText = document.createTextNode("filter")
-    btn.onclick = async function(){
-        for (let elem of document.querySelectorAll(".listItem.jobListItem")) {
-            if (!elem.childNodes[3].childNodes[5].innerText.includes("Praktikant") && !elem.childNodes[3].childNodes[5].innerText.includes("Abschlussarbeit")) {
-                elem.remove()
-            }
-        }
-        addToLog("deleted all entries not containing 'abschlussarbeit' or 'praktikum'")
     }
     btn.appendChild(btnText)
     btnContainer.appendChild(btn)
@@ -86,14 +99,14 @@ async function main() {
     sb.appendChild(log)
     document.getElementsByTagName("body")[0].appendChild(sb)
 
-    addToLog("=== INFO ===")
-    addToLog("Erweiterung, um die teilweise nicht funktionierende Such- und Filterfunktion der Webseite einfach zu umgehen.")
+    addToLog("=== Script loaded ===")
 
-    addGlobalStyle(".snackbar {	overflow: hidden; position: absolute;	width: 249px;	margin: 20px;	top: 0;	border: rgba(0, 0, 0, 0.1) 1px solid;	height: 350px;	background-color: lightgray;	box-shadow: 2px 4px 10px rgba(64, 60, 60, 0.4);	right: 0;}")
-    addGlobalStyle(".log { margin: 10px; height: 100%; width: 100% }")
+    addGlobalStyle(".snackbar {	overflow: auto; position: absolute;	width: 270px;	margin: 20px;	top: 0;	border: rgba(0, 0, 0, 0.1) 1px solid;	height: 350px;	background-color: lightgray;	box-shadow: 2px 4px 10px rgba(64, 60, 60, 0.4);	right: 0;}")
+    addGlobalStyle(".log { margin: 10px; height: calc(100% - 10px); width: calc(100% - 10px) }")
     addGlobalStyle(".log div { margin: 5px 0px}")
     addGlobalStyle(".button-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; row-gap: 2px}")
     addGlobalStyle(".button-container button { width: 100px; }")
+    addGlobalStyle(".log li { margin: 5px 0px }")
 
 
 
