@@ -17,3 +17,7 @@ Grund dafür ist, dass die vorhandene Suchfunktion teilweise nicht funktionierte
 
 
 ### Installation
+Tampermonkey wird benötigt.
+
+URL zum RAW Script dieses Repos einfügen unter:
+Tampermonkey -> Utilities -> Import from URL
